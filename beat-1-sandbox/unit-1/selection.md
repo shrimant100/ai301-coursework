@@ -15,22 +15,116 @@ wrong label is not graded.
 
 **Issue link**
 
-[The individual Path Review issue page. A link to the repository or the issue list
-does not satisfy this field.]
+https://github.com/codepath/pathreview-ai301-fa26-s1/issues/62
 
 **Verdict output**
 
-[Your skill's live-mode output for this issue, pasted verbatim and ending with the
-fenced JSON verdict block. A summary does not satisfy this field.]
+Grading all three issues from the scoped repo (`codepath/pathreview-ai301-fa26-s1`) against `rubric.md`, using only the live evidence gathered via `gh`.
 
-**The verdict must record `accept` for this issue.** Choose an issue your own skill
-accepts. If your skill rejects every candidate you try, that is a signal about your
-rubric rather than about the issues: revise it and re-run — retries are unlimited and a
-partial re-run costs about $0.20 — or run the skill on different candidates. Output
-recording `reject` for the issue you chose earns no credit for this field.
+**Repo-level required checks (identical for all three issues):**
+- `repo-not-archived`: pass — `archived: no`
+- `repo-recent-activity`: pass — last push 2026-09-16, capture 2026-09-23 (7 days, well under 120)
+- `maintainer-reachable`: pass — no numeric response-time sample given, but last push is within 120 days of capture (sparse-sample fallback)
+- `ai-not-outright-banned`: pass — CONTRIBUTING.md sets no outright AI ban
 
-```
-paste the output here, including the closing JSON block
+**Issue #62 — `redis_host`/Settings mismatch in health check**
+| Check | Grade | Evidence |
+|---|---|---|
+| no-open-claim | pass | assignees: none; no open linked PRs |
+| not-umbrella-scope | pass | single bounded bug in `api/routes/health.py` vs `core/config.py` |
+| bounded-deliverable | pass | body has named files + Steps to reproduce for `GET /health` |
+| not-stale-abandoned-prs | pass | no linked PRs at all |
+| not-drive-by-feature | pass | opener is cohort-maintainer-filed; labels include bug/good-first-issue |
+| good-first-issue-label (pref) | pass | label present |
+| repro-or-acceptance (pref) | pass | explicit "Steps to reproduce" |
+
+→ **accept**, 2/2 preferred.
+
+**Issue #72 — `verify_password` raises `UnknownHashError`**
+| Check | Grade | Evidence |
+|---|---|---|
+| no-open-claim | pass | assignees: none; no open linked PRs (classmate claim comments ignored per house rule) |
+| not-umbrella-scope | pass | single fix in `core/security.py` |
+| bounded-deliverable | pass | named file, xfail test H-05, 1-2hr estimate |
+| not-stale-abandoned-prs | pass | no linked PRs |
+| not-drive-by-feature | pass | maintainer-filed, bug/good-first-issue labels |
+| good-first-issue-label (pref) | pass | label present |
+| repro-or-acceptance (pref) | fail | no explicit Reproduction/Acceptance-criteria section noted in evidence, only a named xfail test |
+
+→ **accept**, 1/2 preferred.
+
+**Issue #57 — Tech detector counts vendored/build-output files**
+| Check | Grade | Evidence |
+|---|---|---|
+| no-open-claim | pass | assignees: none; no open linked PRs |
+| not-umbrella-scope | pass | single file `agent/tools/tech_detector.py` |
+| bounded-deliverable | pass | repro snippet + named test names in body |
+| not-stale-abandoned-prs | pass | no linked PRs |
+| not-drive-by-feature | pass | maintainer-filed, bug/good-first-issue/agent labels |
+| good-first-issue-label (pref) | pass | label present |
+| repro-or-acceptance (pref) | pass | body includes a repro snippet |
+
+→ **accept**, 2/2 preferred.
+
+**Ranking (all three accepted):**
+1. **#62** — ties on preferred checks (2/2) and best matches the fit profile: it's an API-layer bug directly involving Redis config (`redis_host` vs `redis_url`), continuing directly from the student's prior Tier-1 Redis session-state work in `agent/orchestrator.py`, with a clean repro path and one/two focused files.
+2. **#57** — also 2/2 preferred, agent-layer (matches the preferred "agent" layer and prior agent-module experience), single file, repro snippet + named tests to extend.
+3. **#72** — accepted but ranks last: only 1/2 preferred (no explicit repro/acceptance section in the evidence), and `core/security.py` sits outside the explicitly preferred agent/API/ingestion layers, though it's still a very tightly scoped fix.
+
+```json
+[
+  {
+    "item": "https://github.com/codepath/pathreview-ai301-fa26-s1/issues/62",
+    "checks": [
+      {"name": "repo-not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "repo-recent-activity", "grade": "pass", "evidence": "last push 2026-09-16 vs captured 2026-09-23 (7 days)"},
+      {"name": "maintainer-reachable", "grade": "pass", "evidence": "no numeric sample, but last push within 120 days (sparse-sample fallback)"},
+      {"name": "ai-not-outright-banned", "grade": "pass", "evidence": "CONTRIBUTING.md: no outright AI ban, standard fork/PR workflow"},
+      {"name": "no-open-claim", "grade": "pass", "evidence": "assignees: none; no open linked PRs"},
+      {"name": "not-umbrella-scope", "grade": "pass", "evidence": "bounded bug in api/routes/health.py vs core/config.py"},
+      {"name": "bounded-deliverable", "grade": "pass", "evidence": "body includes Steps to reproduce for GET /health plus named files"},
+      {"name": "not-stale-abandoned-prs", "grade": "pass", "evidence": "linked PRs: none"},
+      {"name": "not-drive-by-feature", "grade": "pass", "evidence": "maintainer-filed cohort issue; labels bug/good first issue"},
+      {"name": "good-first-issue-label", "grade": "pass", "evidence": "labels include good first issue"},
+      {"name": "repro-or-acceptance", "grade": "pass", "evidence": "body has explicit Steps to reproduce"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/codepath/pathreview-ai301-fa26-s1/issues/57",
+    "checks": [
+      {"name": "repo-not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "repo-recent-activity", "grade": "pass", "evidence": "last push 2026-09-16 vs captured 2026-09-23 (7 days)"},
+      {"name": "maintainer-reachable", "grade": "pass", "evidence": "no numeric sample, but last push within 120 days (sparse-sample fallback)"},
+      {"name": "ai-not-outright-banned", "grade": "pass", "evidence": "CONTRIBUTING.md: no outright AI ban"},
+      {"name": "no-open-claim", "grade": "pass", "evidence": "assignees: none; no open linked PRs"},
+      {"name": "not-umbrella-scope", "grade": "pass", "evidence": "single file agent/tools/tech_detector.py"},
+      {"name": "bounded-deliverable", "grade": "pass", "evidence": "body has repro snippet and named test names"},
+      {"name": "not-stale-abandoned-prs", "grade": "pass", "evidence": "linked PRs: none"},
+      {"name": "not-drive-by-feature", "grade": "pass", "evidence": "maintainer-filed; labels bug/good first issue/agent/tier-1"},
+      {"name": "good-first-issue-label", "grade": "pass", "evidence": "labels include good first issue"},
+      {"name": "repro-or-acceptance", "grade": "pass", "evidence": "body includes a repro snippet"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/codepath/pathreview-ai301-fa26-s1/issues/72",
+    "checks": [
+      {"name": "repo-not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "repo-recent-activity", "grade": "pass", "evidence": "last push 2026-09-16 vs captured 2026-09-23 (7 days)"},
+      {"name": "maintainer-reachable", "grade": "pass", "evidence": "no numeric sample, but last push within 120 days (sparse-sample fallback)"},
+      {"name": "ai-not-outright-banned", "grade": "pass", "evidence": "CONTRIBUTING.md: no outright AI ban"},
+      {"name": "no-open-claim", "grade": "pass", "evidence": "assignees: none; no open linked PRs (classmate claim comments ignored per house rule)"},
+      {"name": "not-umbrella-scope", "grade": "pass", "evidence": "single fix in core/security.py"},
+      {"name": "bounded-deliverable", "grade": "pass", "evidence": "named file, xfail test H-05, 1-2 hour estimate"},
+      {"name": "not-stale-abandoned-prs", "grade": "pass", "evidence": "linked PRs: none"},
+      {"name": "not-drive-by-feature", "grade": "pass", "evidence": "maintainer-filed; labels bug/good first issue/api/tier-1"},
+      {"name": "good-first-issue-label", "grade": "pass", "evidence": "labels include good first issue"},
+      {"name": "repro-or-acceptance", "grade": "fail", "evidence": "no explicit Reproduction/Acceptance-criteria section noted, only a named xfail test"}
+    ],
+    "verdict": "accept"
+  }
+]
 ```
 
 ---
@@ -41,44 +135,38 @@ Quote source text directly in each field below. Paraphrase does not satisfy them
 
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. Smoke run (`--limit 3`): **3/3** agreement.
+2. First full run (20 issues): **17/20** — below the 18/20 bar; disagreements on issue-04, issue-14, issue-15.
+3. Targeted re-run (`--only issue-04,issue-14,issue-15`) after rubric edits: **3/3**.
+4. Confirming full run with `--save-run` (committed as `eval-run.txt`): **20/20** PASS, category floor met.
 
 **Issue analysis**
 
-[One scored issue, identified by id (`issue-01` through `issue-20`; the `calib-`
-issues are not scored). State your rubric's decision, the gold label, and the
-reasoning that produced your rubric's result.]
+**issue-15** (scored). Gold label: **reject**. Rubric (after adding `not-stale-abandoned-prs`): **reject**. The bundle shows the issue opened in 2021 with two linked PRs both `(closed)` and no open/merged PR, while the thread is years of claim/unassign cycles — a friendly label hiding a hard integration change. Gold and rubric agree the issue is not a realistic first contribution despite `good first issue`.
 
 **Check rationale**
 
-[One check from the `rubric.md` uploaded to `tools/issue-select/`, quoted as it is
-currently written, with the reasoning behind its current form.]
+From `tools/issue-select/rubric.md`, check **`not-stale-abandoned-prs`**:
+
+> Fail if the issue opened **>= 730 days** before capture **and** the linked-PR line lists **2+** PRs marked `(closed)` **and** lists **no** `(open)` or `(merged)` PR (multiple abandoned attempts). Otherwise pass.
+
+I added this after the first full run wrongly **accepted** issue-15. The evidence guide’s “age and history” family says long-lived issues with abandoned PRs signal real difficulty; this check encodes that with countable thresholds on the repo-facts block instead of adjectives.
 
 **Trade-offs**
 
-[What the quoted check gives up. Any one of these is a complete answer: an issue whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+The **`maintainer-reachable`** pass path that treats “no numeric response in the entire sample + last push within 120 days” as pass (added for issue-14) can accept repos where maintainers are active on code but silent on issues. I re-ran **`--only issue-07,issue-17`** on the confirming full run: both stayed **reject** because **`repo-recent-activity`** still fails on stale last-push dates, so dead-repo gold labels did not flip.
 
 ---
 
 ## Selection rationale
 
-Graded on whether all three are answered, in your own words. Not on how good the
-reasoning is, and not on length — a short honest answer to each earns the full marks.
-This is also the basis for the claim comment you write in Unit 2.
-
 **Selection rationale**
 
-[Answer all three:
+1. **Fit and time:** Issue **#62** is tier-1 **api** work in `api/routes/health.py` and `core/config.py` — a bounded Redis configuration bug with explicit repro steps. It fits my Python/FastAPI background and the ~3–6 hours/week I have; the skill ranked it first for aligning with prior Redis-related Tier-1 work on the agent orchestrator.
 
-1. The issue's fit to your interests and to the time available.
-2. What the verdict identified correctly, and what you weighed that the rubric could
-   not.
-3. The anticipated difficulty in claiming it.]
+2. **What the rubric gets right / what I weigh beyond it:** Required checks filtered liveness, policy, and scope; house rules correctly ignored classmates’ claim comments on #72 while still requiring no assignee/open linked PR. I also weighed the skill’s preferred-check tie-break (repro section present on #62 vs #72) and thread repro detail, which the rubric does not score as required.
+
+3. **Claim difficulty:** Low–medium: clear `GET /health` repro, two focused modules, no design debate. Some classmates commented on related issues; per `scope.md` that does not block claiming — Unit 2 credit is on the PR I open.
 
 ---
 
