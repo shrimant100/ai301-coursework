@@ -15,17 +15,19 @@ label is not graded.
 
 **GitHub username**
 
-[Your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comment upstream is identified by this name, and it is
-the only thing that ties it to you. Several students may plan the same
-house issue, so this is what keeps their comments off your score and
-yours off theirs.]
+shrimant100
 
 **Plan comment**
 
-[Link to the comment where you posted your plan on the issue. Use the comment's own
-permalink. **Then paste the text of that comment underneath the link** — the pasted text is
-what this field is graded on, so copy across what you actually posted.]
+https://github.com/codepath/pathreview-ai301-fa26-s1/issues/62#issuecomment-5984477760
+
+Plan for #62 (builds on my Unit 2 repro on this thread):
+
+**Cause:** `health_check()` in `api/routes/health.py` constructs Redis with `settings.redis_host` / `settings.redis_port`, but `Settings` only defines `redis_url`, so the probe raises `AttributeError` before `ping()` and always reports `"redis": "unhealthy"`.
+
+**Fix (bounded):** Build the client with `Redis.from_url(settings.redis_url, decode_responses=True)` in that route only; add a small unit test on the Redis branch; re-run my repro (`PONG` + `GET /health`) and expect `"redis": "healthy"` with no `redis_host` error in the log. Not tackling the separate Postgres/SQLAlchemy issue in the same 503 response.
+
+Full plan with quoted repro evidence is in my next steps on the branch `fix/62-redis-health-redis-url`; PR to follow after tests pass locally.
 
 ---
 
@@ -33,15 +35,33 @@ what this field is graded on, so copy across what you actually posted.]
 
 **Branch**
 
-[The name of the branch you built the change on, exactly as it appears in your fork. The
-naming shape is a type prefix, then the issue number, then a short description. **The issue
-number in the branch name must be the number of the issue you claimed** — a name carrying
-any other number does not satisfy this field.]
+fix/62-redis-health-redis-url
 
 **Evidence**
 
-[Your Unit 2 reproduction steps re-run against the built change: the before, then the
-after. Paste both, including the commands you ran and their output.]
+**Before (main, broken probe):**
+
+```
+redis_health_check_failed error="'Settings' object has no attribute 'redis_host'"
+HTTP 503
+redis: unhealthy
+```
+
+**After (branch fix/62-redis-health-redis-url):**
+
+```
+pytest tests/unit/test_health.py -v
+# test_redis_health_check_uses_redis_url PASSED
+
+docker compose exec -T redis redis-cli ping
+PONG
+
+redis_health_check_passed
+HTTP 503
+dependencies: postgres=unhealthy, redis=healthy, vector_db=healthy
+```
+
+(Full commands in `step-11-evidence.md` in this folder.)
 
 ## Eval iterations
 
@@ -50,28 +70,24 @@ fields.
 
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. Calibration (`--include-calibration --only calib-01,calib-03`): both packages agree with gold (warm-up, not scored).
+2. Confirming full run with `--save-run` (committed as `eval-run.txt`): **20/20** PASS; category floor met (`clear-accept 7/7`, `scope-creep 4/4`, `thread-convention 2/2`, `unbuildable 3/3`, `wrong-cause 4/4`).
 
 **Package analysis**
 
-[Pick one scored package (`pkg-01` through `pkg-20` — the four `calib-` packages are never
-scored). Name it by id, say what your rubric decided and what the gold label said, and
-explain why your rubric read it that way.]
+**pkg-06** (scored, category `scope-creep`). Gold label: **reject**. Rubric: **reject**. The repro pins an empty tar on `minikube image save` for preloaded containerd images, but the candidate plan turns that into a five-part pipeline rewrite (preload regeneration, containerd bump, unified image abstraction, error surfacing, CI matrix) across preload scripts, all three runtimes, and workflows. **`scope-bounded`** fails the “multi-front campaign beyond what the issue and repro require” condition, matching gold’s scope-creep label.
 
 **Check rationale**
 
-[Quote one check from the `rubric.md` you uploaded to `tools/plan-check/`, exactly as it reads now.
-Then say why it reads that way — what you revised to get there, or what you rejected in
-favour of it.]
+From `tools/plan-check/rubric.md`, check **`scope-bounded`**:
+
+> Pass if the plan names **at least one concrete change target** (file, module, function, or doc surface) **and** at least one explicit **out-of-scope** boundary for this fix. Fail if there is no named target, or the fix is wrapped in a multi-front campaign (migrations, printer rewrites, new frameworks, "while we're here" refactors) beyond what the issue and repro require.
+
+I kept this wording from the Unit 3 template and evidence guide so eval **`scope-creep`** packages (like **pkg-06**, **pkg-12**, **pkg-15**, **pkg-19**) reject on an observable list of fronts instead of a vague “too big” judgment.
 
 **Trade-offs**
 
-[Every check gives something up. Any one of these is a complete answer: a package whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+**`scope-bounded`** is strict about “while we’re here” refactors: a plan that names one file but also schedules unrelated runtime upgrades still fails, which is why **pkg-06** stays **reject**. I did not loosen it to “any named file passes,” because that would let **pkg-12**-style creep through; the confirming **20/20** full run is the check that the threshold still aligns with gold on the other scope-creep items.
 
 ---
 
