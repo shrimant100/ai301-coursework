@@ -30,7 +30,7 @@ In `api/routes/health.py`, the Redis branch builds `redis.Redis(host=settings.re
 ## Test plan
 
 1. **Re-run Unit 2 repro** on the branch: `docker compose up -d redis`, start the app, `GET /health`. With Redis up, expect `"redis": "healthy"` and no `redis_host` `AttributeError` in logs. (Overall status may still be 503 if Postgres probe fails separately; I will quote the Redis dependency field and the Redis log line as the pass/fail signal for this fix.)
-2. **Automated:** new unit test for the health route's Redis path — mock `redis.Redis.from_url` to return a client whose `ping()` succeeds and assert the response marks Redis healthy (and that `from_url` was called with `settings.redis_url`).
+2. **Automated:** new unit test for the health route’s Redis path — mock `redis.Redis.from_url` to return a client whose `ping()` succeeds and assert the response marks Redis healthy (and that `from_url` was called with `settings.redis_url`).
 
 ## Deviations
 

@@ -15,15 +15,11 @@ label is not graded.
 
 **Pull request**
 
-[Link to the pull request you opened. It must be the pull request's own page on the Path
-Review repo, not your fork's branch page.]
+https://github.com/codepath/pathreview-ai301-fa26-s1/pull/186
 
 **Branch**
 
-[The name of the branch the pull request comes from, exactly as it appears in your fork.
-The naming shape is a type prefix, then the issue number, then a short description. **The
-issue number in the branch name must be the number of the issue the pull request fixes** —
-a name carrying any other number does not satisfy this field.]
+fix/62-redis-health-redis-url
 
 ## Eval iterations
 
@@ -32,28 +28,26 @@ fields.
 
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. Smoke (`--limit 3`): **3/3** agree.
+2. First confirming full run (`--save-run`): **19/20** — disagreed on **pkg-13** (`test-evidence-decisive`); category floor **6/7** on clear-accept.
+3. Rubric clarification for primary repro + named steps/deferrals; canary `--only pkg-13,pkg-10,pkg-04`: **3/3**.
+4. Final confirming full run (committed as `eval-run.txt`): **20/20** PASS; category floor met (`clear-accept 7/7`, `not-tested 4/4`, `silent-drift 4/4`, `standards-wall 2/2`, `unreviewable 3/3`).
 
 **Package analysis**
 
-[Pick one scored package (`pkg-01` through `pkg-20` — the four `calib-` packages are never
-scored). Name it by id, say what your rubric decided and what the gold label said, and
-explain why your rubric read it that way.]
+**pkg-13** (scored, category `clear-accept`). Gold label: **accept**. Rubric: **accept** after rubric fix. Neovim URL fix with honest `%VAR%` deferral in plan and description; test evidence quotes primary repro before/after and names the functional spec pass — **`test-evidence-decisive`** passes without requiring a separate test run for the deferred out-of-scope limit.
 
 **Check rationale**
 
-[Quote one check from the `rubric.md` you uploaded to `tools/pr-precheck/`, exactly as it reads now.
-Then say why it reads that way — what you revised to get there, or what you rejected in
-favour of it.]
+From `tools/pr-precheck/rubric.md`, check **`test-evidence-decisive`**:
+
+> Pass if the evidence quotes a run for the plan's **primary** repro (the failing step or symptom the fix targets) with before/after or expected-after, **and** each **other named** step in the test plan is either quoted, covered by quoted suite output the plan names (e.g. a spec file or `make` target), or briefly attested in one line when the plan expects no change (e.g. "control unchanged"). Out-of-scope limits the plan defers (plan + description) do not require their own test runs.
+
+I added the primary-vs-named-step split after **pkg-13** flipped to reject on the first full run, so honest deferrals (like **pkg-16**) stay accept while **pkg-10**-style vague proof still fails.
 
 **Trade-offs**
 
-[Every check gives something up. Any one of these is a complete answer: a package whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+**`test-evidence-decisive`** allows a one-line control attestation when the primary repro is quoted; that is why **pkg-13** matches gold after the fix. I re-ran **`--only pkg-10,pkg-04`** so tightening did not let vague "verified locally" packages through before the **20/20** confirming run.
 
 ---
 
