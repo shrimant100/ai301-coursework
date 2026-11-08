@@ -58,9 +58,9 @@ one in the week it belongs to.
 
 I extended Unit 1 `issue-select` into `issue-scout` (fit profile, three `gh` queries, ranking filters) and saved the official scan read-out to `~/.claude/skills/issue-scout/scan-output.md`. The first funnel crowded three issues from one repo and put a GUI-heavy ticket at #1, so I added a one-issue-per-repo cap and a title tie-break in `search-strategy.md` (`scan-notes.md`). Step 8 used the cohort [Issue Selection site](https://open-source-issue-tracker.onrender.com/) (Python + good first issue); I claimed OWASP/Nest#5259 and apache/hamilton#74 and left claim comments on GitHub. Direct `issue-scout: grade` accepted Nest#5259 but **rejected** Hamilton#74 on `no-open-claim` (open PR #1796) — so Nest is my real contribution path; Hamilton stays a cohort hold only unless I unclaim it.
 
-**Unit 6: Voice guard installed; issue-scout rubric patched to `scope-feasible`; re-graded tracker picks.**
+**Unit 6: Voice guard, repo memory file, claim + repro drafts for Nest#5259.**
 
-I cloned `ai301-unit6-starter`, promoted my voice guide to `~/.claude/voice-guard/voice-guide.md` (with an **Upstream** section for wild claims/questions/pings), merged the PreToolUse hook into `~/.claude/settings.json`, and overlaid wild `scope.md` on repro-check and plan-check. I replaced **`not-umbrella-scope`** with **`scope-feasible`** plus difficulty notes, re-ran `issue-scout: grade` on Nest#5259 and Hamilton#74, appended the read-out to `scan-output.md`, chose **Nest#5259**, and **unclaimed** Hamilton on the tracker. Hook wiring was verified with the assignment’s `check_voice.py` path on Windows (`python` instead of `python3`).
+I installed voice-guard (PreToolUse hook on `gh issue comment`, canonical `voice-guide.md` with **Upstream** rules), forked/cloned `shrimant100/Nest`, and added `CLAUDE.local.md` via the unit-6 template (distilled sitemap subsystem notes, excluded with `.git/info/exclude`). I posted the voice-guarded claim (#6728578830), wrote `repro-draft.md` + a small route-map helper, and manual repro-check **accept** — Docker daemon was off so full `make backend-test-unit` waits for WSL. Windows hook path uses `python` not `python3`.
 
 **Unit 7: [one line on the tool work]**
 
@@ -95,26 +95,28 @@ The thread is crowded with prior volunteers, but there is still no assignee and 
 
 **Problem Description**
 
-[In your own words, what is broken or missing?]
+`StaticSitemap.lastmod()` should derive each static route’s `<lastmod>` from the newest `updated_at` on the mapped model. `/repositories` is listed in `STATIC_ROUTES` but omitted from `path_to_model`, so it always takes the `datetime.now(UTC)` fallback meant for unknown paths.
 
 **Expected Behavior**
 
-[What should happen?]
+`/repositories` should behave like `/projects` and `/chapters`: `Repository.objects.aggregate(Max("updated_at"))` drives `lastmod`.
 
 **Current Behavior**
 
-[What actually happens?]
+On every sitemap regeneration, `/repositories` gets “now” as `lastmod` while the other seven static routes reflect their models’ latest updates.
 
 **Affected Components**
 
-[Which parts of the codebase are involved?]
+- `backend/src/apps/sitemap/views/static.py` — `path_to_model` dict in `lastmod()`
+- `backend/src/apps/sitemap/views/base.py` — `STATIC_ROUTES` includes `/repositories`
+- `backend/tests/unit/apps/sitemap/views/static_test.py` — unit coverage for `lastmod` (issue asks for “every static route maps to a model”)
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: issue thread + targeted file read in the fork (`CLAUDE.local.md` orientation)
+- What it produced: concrete file list and missing `Repository` import/mapping
+- Difficulties: crowded claim thread; no assignee yet
+- What changed: none (understanding only)
 
 ---
 
@@ -122,31 +124,32 @@ The thread is crowded with prior volunteers, but there is still no assignee and 
 
 **Environment Setup**
 
-[What a stranger would need to stand this up: your operating system,
-the relevant versions (language, runtime, package manager, the project
-itself), and how you set the project up. Then the challenges you faced
-and how you solved them, or that none came up.]
+Windows 11; fork `shrimant100/Nest` at commit `9cfebd7` (2026-11-08). Docker Desktop 24.0.6 is installed but the daemon was stopped during this week’s repro — full Nest stack uses Docker + WSL per `CONTRIBUTING.md` (I will run `make backend-test-unit` and XML sitemap compare before the PR). Helper script: `beat-1-sandbox/unit-6/repro_static_route_check.py` (also in unit-6 starter).
 
 **Steps to Reproduce**
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. Clone the fork and confirm SHA: `git rev-parse HEAD` → `9cfebd7…`
+2. Run `python beat-1-sandbox/unit-6/repro_static_route_check.py` (parses `base.py` / `static.py` on disk).
+3. Compare simulated `lastmod` branches: `/repositories` hits `datetime.now(UTC)`; `/projects` and `/chapters` would call `aggregate(Max("updated_at"))`.
 
 **Reproduction Evidence**
 
-- **Commit showing reproduction:** [link to commit in your fork]
-- **Screenshots/logs:** [if applicable]
-- **My findings:** [what you discovered during reproduction; an
-  honest, evidenced cannot-reproduce that led you to re-pick or ask
-  the maintainer belongs here and costs you nothing]
+- **Commit showing reproduction:** none (no commit yet; repro is pre-fix inspection on `main`)
+- **Screenshots/logs:** quoted CLI output below (from 2026-11-08 run)
+- **My findings:** only `/repositories` is missing from `path_to_model`; this matches the issue’s root cause. Next: regenerate static sitemap in Docker/WSL and capture `<lastmod>` XML diff for PR evidence.
+
+```text
+unmapped static routes: ['/repositories']
+/repositories: datetime.now(UTC) => 2026-11-08T23:29:36.894485+00:00
+/projects: would call model.objects.aggregate(Max('updated_at'))
+```
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: repro-check (manual rubric pass); helper script + `repro-draft.md`
+- What it produced: accept-grade package in `beat-1-sandbox/unit-6/repro-grade-notes.md` (not posted on GitHub — repro stays in PR later)
+- Difficulties: Docker daemon off + WSL not usable from this shell; deferred full sitemap XML compare
+- What changed: documented honest deferral in repro draft instead of over-claiming XML output
 
 ---
 
