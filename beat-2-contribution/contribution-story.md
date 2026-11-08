@@ -80,7 +80,7 @@ I filtered the [Issue Selection site](https://open-source-issue-tracker.onrender
 
 The thread is crowded with prior volunteers, but there is still no assignee and no open linked PR; I read the comments and will coordinate if a maintainer points at an in-flight PR. I swapped **`not-umbrella-scope`** for **`scope-feasible`** in my rubric this week so bounded issues with social contention are not rejected for scope alone; contention is a human judgment call on the thread, not a silent override of the scout.
 
-**Claim comment:** https://github.com/OWASP/Nest/issues/5259#issuecomment-6727775178
+**Claim comment:** https://github.com/OWASP/Nest/issues/5259#issuecomment-6728578830 (voice-guard + repro-check accepted; earlier draft at #6727775178)
 
 **Toolkit**
 
