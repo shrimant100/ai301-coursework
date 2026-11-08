@@ -155,3 +155,56 @@ Bounded Python backend fix (`static.py` + tests). Rubric passes; thread is busy 
   }
 ]
 ```
+
+---
+
+## Direct grading — tracker picks, re-grade (2026-11-08, post `scope-feasible` patch)
+
+Graded again with Unit 6 rubric (`not-umbrella-scope` → `scope-feasible`).
+
+### OWASP/Nest#5259 — **accept** · difficulty **straightforward**
+
+Names `backend/src/apps/sitemap/views/static.py`, mapping fix, and regression test.
+
+### apache/hamilton#74 — **reject** · would be **ambitious** if unclaimed
+
+Still **`no-open-claim` fail** (open PR #1796). Cohort hold released on tracker 2026-11-08.
+
+```json
+[
+  {
+    "item": "https://github.com/OWASP/Nest/issues/5259",
+    "checks": [
+      {"name": "repo-not-archived", "grade": "pass", "evidence": "archived:false"},
+      {"name": "repo-recent-activity", "grade": "pass", "evidence": "pushed_at 2026-11-08"},
+      {"name": "maintainer-reachable", "grade": "pass", "evidence": "last push within 120 days"},
+      {"name": "ai-not-outright-banned", "grade": "pass", "evidence": "CONTRIBUTING silent on AI ban"},
+      {"name": "no-open-claim", "grade": "pass", "evidence": "assignees none; linked PRs all closed"},
+      {"name": "scope-feasible", "grade": "pass", "evidence": "single fix: add /repositories to path_to_model"},
+      {"name": "bounded-deliverable", "grade": "pass", "evidence": "repro + named path + GFI label"},
+      {"name": "not-stale-abandoned-prs", "grade": "pass", "evidence": "opened 2026-07-20"},
+      {"name": "not-drive-by-feature", "grade": "pass", "evidence": "CONTRIBUTOR opener, labeled"},
+      {"name": "good-first-issue-label", "grade": "pass", "evidence": "good first issue"},
+      {"name": "repro-or-acceptance", "grade": "pass", "evidence": "To Reproduce section"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/apache/hamilton/issues/74",
+    "checks": [
+      {"name": "repo-not-archived", "grade": "pass", "evidence": "archived:false"},
+      {"name": "repo-recent-activity", "grade": "pass", "evidence": "pushed_at 2026-11-07"},
+      {"name": "maintainer-reachable", "grade": "pass", "evidence": "last push within 120 days"},
+      {"name": "ai-not-outright-banned", "grade": "pass", "evidence": "CONTRIBUTING silent"},
+      {"name": "no-open-claim", "grade": "fail", "evidence": "open PR #1796 implements #74"},
+      {"name": "scope-feasible", "grade": "pass", "evidence": "one CLI feature (create-tests)"},
+      {"name": "bounded-deliverable", "grade": "pass", "evidence": "example stub behavior in body"},
+      {"name": "not-stale-abandoned-prs", "grade": "pass", "evidence": "open PR #1796 exists"},
+      {"name": "not-drive-by-feature", "grade": "pass", "evidence": "labeled GFI/help wanted"},
+      {"name": "good-first-issue-label", "grade": "pass", "evidence": "good first issue"},
+      {"name": "repro-or-acceptance", "grade": "pass", "evidence": "numbered behaviors in body"}
+    ],
+    "verdict": "reject"
+  }
+]
+```

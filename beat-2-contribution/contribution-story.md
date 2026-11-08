@@ -1,4 +1,4 @@
-# Contribution: [Issue Title]
+# Contribution: Repositories static sitemap lastmod (OWASP Nest #5259)
 
 Path: `beat-2-contribution/contribution-story.md`
 
@@ -58,11 +58,9 @@ one in the week it belongs to.
 
 I extended Unit 1 `issue-select` into `issue-scout` (fit profile, three `gh` queries, ranking filters) and saved the official scan read-out to `~/.claude/skills/issue-scout/scan-output.md`. The first funnel crowded three issues from one repo and put a GUI-heavy ticket at #1, so I added a one-issue-per-repo cap and a title tie-break in `search-strategy.md` (`scan-notes.md`). Step 8 used the cohort [Issue Selection site](https://open-source-issue-tracker.onrender.com/) (Python + good first issue); I claimed OWASP/Nest#5259 and apache/hamilton#74 and left claim comments on GitHub. Direct `issue-scout: grade` accepted Nest#5259 but **rejected** Hamilton#74 on `no-open-claim` (open PR #1796) — so Nest is my real contribution path; Hamilton stays a cohort hold only unless I unclaim it.
 
-**Unit 6: [one line on the tool work]**
+**Unit 6: Voice guard installed; issue-scout rubric patched to `scope-feasible`; re-graded tracker picks.**
 
-[2-4 sentences: the voice-guard, the repo-memory file. What broke or
-fell short, and what changed because of it. "Nothing broke" counts when
-it is true - say how you know.]
+I cloned `ai301-unit6-starter`, promoted my voice guide to `~/.claude/voice-guard/voice-guide.md` (with an **Upstream** section for wild claims/questions/pings), merged the PreToolUse hook into `~/.claude/settings.json`, and overlaid wild `scope.md` on repro-check and plan-check. I replaced **`not-umbrella-scope`** with **`scope-feasible`** plus difficulty notes, re-ran `issue-scout: grade` on Nest#5259 and Hamilton#74, appended the read-out to `scan-output.md`, chose **Nest#5259**, and **unclaimed** Hamilton on the tracker. Hook wiring was verified with the assignment’s `check_voice.py` path on Windows (`python` instead of `python3`).
 
 **Unit 7: [one line on the tool work]**
 
@@ -78,24 +76,18 @@ drafted, what you did with the draft.]
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs in your own words: how you searched, what your scan
-surfaced, what your scout's verdict said, why this issue fits your
-profile, and what you hope to learn. If your scout's verdict on it
-was reject and you chose it anyway, say so here and say why; choosing
-against your own tool silently is what loses points. Close with an
-honest read of the tool itself: where the scout fell short on a real
-wild search and what you changed or would change, or what convinced
-you it held up. **Record the link to your claim comment in this section too.**
-Not claimed yet? Write `claim pending` and today's date where the link goes,
-and add the link the moment your claim lands.]
+I filtered the [Issue Selection site](https://open-source-issue-tracker.onrender.com/) with **Python** and **good first issue**, then used issue-scout scans plus a direct grade on my short list. The scout **accepted** [OWASP/Nest#5259](https://github.com/OWASP/Nest/issues/5259) with difficulty **straightforward**: it names `backend/src/apps/sitemap/views/static.py`, the missing `"/repositories": Repository` mapping, and a test that every static route maps to a model. That matches my PathReview-style Python backend + pytest comfort zone better than my backup hold ([Hamilton#74](https://github.com/apache/hamilton/issues/74)), which the scout **rejected** on `no-open-claim` once open PR [#1796](https://github.com/apache/hamilton/pull/1796) appeared — I unclaimed Hamilton on the cohort site and am committing to Nest only.
+
+The thread is crowded with prior volunteers, but there is still no assignee and no open linked PR; I read the comments and will coordinate if a maintainer points at an in-flight PR. I swapped **`not-umbrella-scope`** for **`scope-feasible`** in my rubric this week so bounded issues with social contention are not rejected for scope alone; contention is a human judgment call on the thread, not a silent override of the scout.
+
+**Claim comment:** https://github.com/OWASP/Nest/issues/5259#issuecomment-6727775178
 
 **Toolkit**
 
-- Tool: issue-scout (your scout: your search strategy, your rubric),
-  and how you used it
-- What it produced: [the scan and its verdict on this issue, described]
-- Difficulties: [where it fell short, or "none met" if none did]
-- What changed: [what you patched or would update, or "nothing"]
+- Tool: issue-scout (`search-strategy.md`, patched `rubric.md`) and the Issue Selection tracker
+- What it produced: accept + **straightforward** on #5259; reject on Hamilton #74 (`no-open-claim`); cohort claim on Nest
+- Difficulties: scout does not count heavy claim-comment threads as contention; Hamilton looked fine on the tracker until linked-PR evidence failed the rubric
+- What changed: `scope-feasible` rubric row; unclaimed Hamilton after re-grade; voice-guide Upstream rules for wild claims (Unit 6)
 
 ---
 

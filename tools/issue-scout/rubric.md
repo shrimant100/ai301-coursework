@@ -20,7 +20,7 @@
 
 | `no-open-claim` | Repo facts `this issue: assignees:` and `linked PRs:` | Pass if assignees are `none` **and** the linked-PR list contains **no** `(open)` PR. Fail if an assignee is named or any linked PR is open. (Path Review live mode: still fail on assignee/open linked PR; ignore classmates' claim **comments** per `scope.md`.) | required |
 
-| `not-umbrella-scope` | Issue title and body | Fail if title contains `megaissue` (any case) **or** body contains `tracking issue` / `megaissue` **or** title+body together describe work across the **whole codebase** without naming a specific file or module (e.g. `to the codebase` plus `incremental` / `throughout` / `anywhere in the codebase`) **or** the body is mainly a list of **8+** other issue references (`#1234` bullets). Otherwise pass. | required |
+| `scope-feasible` | Issue body: the work it asks for | Pass if the issue describes **one identifiable piece of work** someone could start (a behavior, a gap, or a task you can point at). Fail only when there is **no single piece of work**: a codebase-wide checklist, an "improve X everywhere", or a **container issue** tracking many sub-tasks. Open design edges, `etc.`, or several files involved **do not fail** — they raise the difficulty note instead. | required |
 
 | `bounded-deliverable` | Issue body (and title), labels line, opener association in issue header | Pass if the issue asks for one concrete change with enough detail to start (>= **80** characters in the body, or repro / acceptance criteria / named paths). **Also pass** if labels include `good first issue` (case-insensitive) and opener association is **OWNER**, **MEMBER**, or **COLLABORATOR** (short maintainer-filed GFIs are bounded). Fail if it is only a usage/support question with no code change requested. | required |
 
@@ -51,4 +51,14 @@
 
 
 When grading several live URLs, grade each independently, then rank accepted issues using preferred checks and the fit profile in `scope.md`.
+
+## Difficulty note (live direct grading only)
+
+With each **accepted** candidate in a summary read-out, add a one-line difficulty note (not in the JSON):
+
+- **straightforward**: the issue names where the change lives and the change is bounded.
+- **moderate**: the location is yours to find, or several files are involved.
+- **ambitious**: an open design edge or unfamiliar subsystem — name the edge.
+
+The note does not change accept/reject. Skip in eval mode.
 
