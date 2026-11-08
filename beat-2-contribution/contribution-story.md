@@ -9,9 +9,8 @@ files and no evidence uploads are part of Assignment 5.
 
 **Contribution Number:** [1]
 **Student:** [Student name]
-**GitHub Username:** [your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comments upstream are identified by this name.]
-**Issue:** [GitHub issue link]
+**GitHub Username:** shrimant100
+**Issue:** https://github.com/OWASP/Nest/issues/5259
 **Pull Request:** [GitHub PR link, once opened]
 
 One repository, built across units 5 to 8, telling the whole story of your real
@@ -55,10 +54,9 @@ happened; these entries are the toolkit's own timeline.
 All four entries are graded. Keep every heading below, and fill each
 one in the week it belongs to.
 
-**Unit 5: [one line on the tool work]**
+**Unit 5: Installed issue-scout, ran a live scan, patched search-strategy, then graded my tracker picks.**
 
-[2-4 sentences: what you built (the scout, your strategy), what broke
-or fell short, what changed because of it.]
+I extended Unit 1 `issue-select` into `issue-scout` (fit profile, three `gh` queries, ranking filters) and saved the official scan read-out to `~/.claude/skills/issue-scout/scan-output.md`. The first funnel crowded three issues from one repo and put a GUI-heavy ticket at #1, so I added a one-issue-per-repo cap and a title tie-break in `search-strategy.md` (`scan-notes.md`). Step 8 used the cohort [Issue Selection site](https://open-source-issue-tracker.onrender.com/) (Python + good first issue); I claimed OWASP/Nest#5259 and apache/hamilton#74 and left claim comments on GitHub. Direct `issue-scout: grade` accepted Nest#5259 but **rejected** Hamilton#74 on `no-open-claim` (open PR #1796) — so Nest is my real contribution path; Hamilton stays a cohort hold only unless I unclaim it.
 
 **Unit 6: [one line on the tool work]**
 
