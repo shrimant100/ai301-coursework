@@ -62,10 +62,9 @@ I extended Unit 1 `issue-select` into `issue-scout` (fit profile, three `gh` que
 
 I installed voice-guard (PreToolUse hook on `gh issue comment`, canonical `voice-guide.md` with **Upstream** rules), forked/cloned `shrimant100/Nest`, and added `CLAUDE.local.md` via the unit-6 template (distilled sitemap subsystem notes, excluded with `.git/info/exclude`). I posted the voice-guarded claim (#6728578830), wrote `repro-draft.md` + a small route-map helper, and manual repro-check **accept** — Docker daemon was off so full `make backend-test-unit` waits for WSL. Windows hook path uses `python` not `python3`.
 
-**Unit 7: [one line on the tool work]**
+**Unit 7: Ship-gate installed; plan, fix branch, and PR drafts on Nest#5259.**
 
-[2-4 sentences: the ship-gate and your gate manifest. What it produced
-on your real branch, what fought you, what changed because of it.]
+I installed ship-gate on `shrimant100/Nest` (`make check`, `make check-test-backend`, `make backend-test-unit` in `ship-manifest.md`), wrote `plan.md` / `test_evidence.md` / `pr_draft.md`, and built `fix/5259-repositories-sitemap-lastmod` (Repository mapping + regression tests). Docker daemon and WSL/bash gaps blocked `make backend-test-unit` from PowerShell — evidence uses the route-map repro before/after until Docker runs in WSL.
 
 **Unit 8: [one line on the tool work]**
 
@@ -157,76 +156,66 @@ unmapped static routes: ['/repositories']
 
 **Analysis**
 
-[Your analysis of the root cause: what is causing the issue, traced
-to the files and functions involved.]
+`StaticSitemap.lastmod()` (`static.py`) only aggregates `updated_at` when `item["path"]` exists in `path_to_model`. `/repositories` is in `STATIC_ROUTES` (`base.py`) but was omitted from the dict, so the method hits `else datetime.now(UTC)`.
 
 **Proposed Solution**
 
-[High-level description of your fix approach, and what you are
-deliberately NOT changing.]
+Add `from apps.github.models.repository import Repository` and `"/repositories": Repository` to `path_to_model`. Extend unit tests so `/repositories` calls `Repository.objects.aggregate` and every static route avoids the datetime fallback.
+
+**Out of scope:** dynamic `RepositorySitemap`, refactors moving the dict to module scope, frontend or infra.
 
 **Implementation Plan**
 
-1. [Modify file X to do Y]
-2. [Add or change Z]
-3. [Update tests]
+1. Patch `static.py` import + dict entry.
+2. Update `test_lastmod` patches; add `test_lastmod_repositories_uses_repository_aggregate` and `test_every_static_route_maps_to_model`.
+3. Run `make backend-test-unit` / `make check-test-backend` before PR (Docker + WSL).
 
-[Record deviations here as they happen: what changed mid-build and
-why. A recorded deviation is honest work; silent drift is not.]
+No deviations yet.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: plan-check rubric (manual accept) + `plan.md` / `plan-comment.md` in clone
+- What it produced: bounded plan aligned with repro; comment draft not posted upstream
+- Difficulties: plan-check live run needs Claude file approval; graded manually against rubric
+- What changed: none to rubric
 
 ---
 
 ## Testing Strategy
 
-[What observable checks prove the fix: your reproduction steps re-run
-against the built change (before and after), and the repo's own test
-suite or checks with the outcome shown. "Tests pass" with nothing
-observable named is not a strategy.]
+1. **Route-map repro** (`repro_static_route_check.py`): before fix `unmapped static routes: ['/repositories']`; after fix `[]` and `/repositories` on aggregate branch (quoted in `test_evidence.md`).
+2. **Unit tests:** `backend/tests/unit/apps/sitemap/views/static_test.py` — regression + `/repositories` aggregate assertion (run via `make backend-test-unit` when Docker is up).
+3. **Ship-gate manifest:** `make check` then `make check-test-backend` before `gh pr create`.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: ship-gate manifest; local `test_evidence.md`
+- What it produced: before/after repro quotes; pending Docker pytest log
+- Difficulties: Windows `make` needs bash/getconf; Docker daemon off
+- What changed: documented honest pending check in `pr_draft.md` checklist
 
 ---
 
 ## Implementation Notes
 
-[A running log, added to as you work. Date each entry. What you
-built, decisions you made when you made them, wrong turns included.]
+**2026-11-08**
 
-**[Date]**
-
-[Entry]
-
-**[Date]**
-
-[Entry]
+Branched `fix/5259-repositories-sitemap-lastmod`, committed mapping + tests (`2cf632c`). Route-map repro flips from one unmapped route to zero. Docker-backed `make backend-test-unit` not run yet (daemon stopped).
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude + local edits on fork
+- What it produced: two-file patch on branch
+- Difficulties: none in code; environment blocked full test target
+- What changed: none
 
 ---
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when opened]
+**PR Link:** [GitHub PR URL when opened — push `fix/5259-repositories-sitemap-lastmod` first]
 
-**PR Description:** [what the PR says; much of the content above
-adapts into it]
+**PR Description:** Draft in fork `pr_draft.md` — Resolves #5259, before/after repro, AI disclosure, OWASP checklist. Await maintainer assignment per CONTRIBUTING before marking ready.
 
 **Maintainer Feedback:**
 
