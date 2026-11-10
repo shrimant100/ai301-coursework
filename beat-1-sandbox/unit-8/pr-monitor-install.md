@@ -23,3 +23,11 @@ Installed: `monitor.py`, `move-forms.md`, `playbook-template.md`, `playbook.md`,
 - **Playbook:** not ready — fill response rules, staleness thresholds, nudge etiquette, walk-away criteria before a full run
 
 `gh repo set-default OWASP/Nest` may warn inside the fork clone (“does not correspond to any git remotes”); run from another directory or rely on `gh` auth — monitor still resolved the PR by branch.
+
+## Step 5 full run (2026-11-09)
+
+On Windows, set `$env:PYTHONUTF8=1` before `monitor.py` (unicode in prompt).
+
+- **Move:** No-send — wait (7-day issue threshold not met)
+- **Draft:** `~/.claude/pr-monitor/drafted-move.md` — wait on #5259; bot closed PR (unassigned, unsigned commit / no `Signed-off-by`); fix mechanics on branch before reopen
+- **Do not post** the draft as-is (step 6)
