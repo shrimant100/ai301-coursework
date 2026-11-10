@@ -56,7 +56,7 @@ one in the week it belongs to.
 
 **Unit 5: Installed issue-scout, ran a live scan, patched search-strategy, then graded my tracker picks.**
 
-I extended Unit 1 `issue-select` into `issue-scout` (fit profile, three `gh` queries, ranking filters) and saved the official scan read-out to `~/.claude/skills/issue-scout/scan-output.md`. The first funnel crowded three issues from one repo and put a GUI-heavy ticket at #1, so I added a one-issue-per-repo cap and a title tie-break in `search-strategy.md` (`scan-notes.md`). Step 8 used the cohort [Issue Selection site](https://open-source-issue-tracker.onrender.com/) (Python + good first issue); I claimed OWASP/Nest#5259 and apache/hamilton#74 and left claim comments on GitHub. Direct `issue-scout: grade` accepted Nest#5259 but **rejected** Hamilton#74 on `no-open-claim` (open PR #1796) — so Nest is my real contribution path; Hamilton stays a cohort hold only unless I unclaim it.
+I extended Unit 1 `issue-select` into `issue-scout` (fit profile, three `gh` queries, ranking filters) and saved the official scan read-out to `~/.claude/skills/issue-scout/scan-output.md`. The first funnel crowded three issues from one repo and put a GUI-heavy ticket at #1, so I added a one-issue-per-repo cap and a title tie-break in `search-strategy.md` (`scan-notes.md`). Step 8 used the cohort [Issue Selection site](https://open-source-issue-tracker.onrender.com/) (Python + good first issue); I claimed OWASP/Nest#5259 and apache/hamilton#74 and left claim comments on GitHub. Direct `issue-scout: grade` accepted Nest#5259 but **rejected** Hamilton#74 on `no-open-claim` (open PR #1796) — so Nest is my real contribution path; I later unclaimed Hamilton on the tracker.
 
 **Unit 6: Voice guard, repo memory file, claim + repro drafts for Nest#5259.**
 
@@ -66,10 +66,9 @@ I installed voice-guard (PreToolUse hook on `gh issue comment`, canonical `voice
 
 I installed ship-gate on the Nest clone and wrote `ship-manifest.md` (compileall row plus dated exclusions for `make` while Docker was down). `check_gate.py --branch` cleared repo checks and test-evidence after I deferred `make backend-test-unit` in `plan.md`, but pr-precheck still **rejected** Nest’s unassigned-contributor PR-template rule — so I opened [PR #5818](https://github.com/OWASP/Nest/pull/5818) with `gh` after `gh repo set-default OWASP/Nest`. Next: assignment on #5259, then ship-gate PASS and `make check-test-backend` in WSL.
 
-**Unit 8: [one line on the tool work]**
+**Unit 8: PR monitor + playbook; first full run drafted a wait move on closed PR #5818.**
 
-[2-4 sentences: the PR-monitor and your playbook. What it read, what it
-drafted, what you did with the draft.]
+Installed `~/.claude/pr-monitor/`, wrote `playbook.md` (7-day issue nudge, no ping on auto-closed PR). Full run (with `PYTHONUTF8=1` on Windows) read bot comments on #5818 and drafted **No-send — wait**: assignment/signature failures, not maintainer review — I did not post. Following playbook: wait 7 days, then one comment on #5259 about assignment and reopen; meanwhile prep signed commits and `Signed-off-by` for a fresh push.
 
 ---
 
@@ -202,6 +201,10 @@ No deviations yet.
 
 Branched `fix/5259-repositories-sitemap-lastmod`, committed mapping + tests (`2cf632c`). Route-map repro flips from one unmapped route to zero. Docker-backed `make backend-test-unit` not run yet (daemon stopped).
 
+**2026-11-09**
+
+Opened [PR #5818](https://github.com/OWASP/Nest/pull/5818); github-actions closed it the same day (issue not assigned, unsigned commit). Ran PR monitor full run → **wait** per playbook; no upstream post.
+
 **Toolkit**
 
 - Tool: Claude + local edits on fork
@@ -219,14 +222,17 @@ Branched `fix/5259-repositories-sitemap-lastmod`, committed mapping + tests (`2c
 
 **Maintainer Feedback:**
 
-- 2026-11-09: none yet (PR opened; issue still unassigned)
+- 2026-11-10: **none from humans** — no reviewer comments or requests.
+- 2026-11-10: **github-actions[bot]** on #5818 — contribution validation failed (issue not assigned to author; commit `2cf632c` not signed). PR auto-closed. **My response:** no reply on the closed PR; per playbook and monitor, wait 7 days then ping on #5259 for assignment; prepare signed commits + `Signed-off-by` before reopening.
+
+**Status:** Closed (automation; awaiting assignment on #5259 before reopen)
 
 **Toolkit**
 
-- Tool: ship-gate (`check_gate.py`, manifest exclusions), voice guard on `gh pr create`, plain `gh pr create --body-file pr_draft.md`
-- What it produced: upstream PR #5818; manual gate log showing compileall pass + pr-precheck reject on assignment template only
-- Difficulties: Docker off blocked manifest `make` rows; ship-gate hooks block Claude-opened PR until assigned
-- What changed: manifest uses `compileall` + excluded `make` with dates; opened via `gh` when hooks could not PASS yet
+- Tool: ship-gate + `gh pr create`; Unit 8 **pr-monitor** (`monitor.py --state`, full run, `playbook.md`)
+- What it produced: #5818 opened then closed; `drafted-move.md` = wait (threshold unmet)
+- Difficulties: Nest bot rules stricter than course ship-gate alone; Windows UTF-8 needed for monitor Claude call
+- What changed: playbook encodes issue ping vs dead-PR thread; no post this week
 
 ---
 
@@ -234,25 +240,21 @@ Branched `fix/5259-repositories-sitemap-lastmod`, committed mapping + tests (`2c
 
 **Technical Skills Gained**
 
-[What you learned technically, named concretely.]
+Read Django sitemap code paths (`StaticSitemap.lastmod`, `STATIC_ROUTES` vs in-method `path_to_model`), and wrote regression tests with `unittest.mock`/`ExitStack` so every static route avoids the datetime fallback. Practiced Nest’s Docker-`make` workflow expectations even when I could only run a route-map repro and `compileall` locally.
 
 **Challenges Overcome**
 
-[What was hard and how you solved it; point at the real events, the
-Toolkit blocks above are full of them.]
+Windows blocked full `make test` (bash/getconf, Docker daemon off) while the assignment still asked for honest evidence — I used quoted before/after repro output and documented deferrals in `plan.md` / `test_evidence.md`. Upstream workflow added assignment, signed commits, and bot-driven PR closure; the PR monitor turned that into an explicit **wait** instead of an anxious comment on a dead thread.
 
 **What I'd Do Differently Next Time**
 
-[Reflection on your process.]
+Get issue assignment and GPG/signing + DCO trailers sorted **before** opening the upstream PR; clone and develop in WSL from the start so `make check-test-backend` is routine. Run ship-gate to PASS before `gh pr create` when the repo’s template enforces assignment.
 
 ---
 
 ## Resources Used
 
-[What actually helped, not a reading list. List things this story
-already shows you using: the doc you followed to set the environment
-up, the thread that explained the bug, the person who answered you.
-One real entry beats ten plausible ones.]
-
-- [Link to documentation that helped]
-- [Discussion, issue, or post that helped]
+- [OWASP/Nest CONTRIBUTING.md](https://github.com/OWASP/Nest/blob/main/CONTRIBUTING.md) — Docker/WSL, `make check-test`, assignment-before-PR.
+- [Issue #5259](https://github.com/OWASP/Nest/issues/5259) — bug description and suggested fix (`Repository` mapping + tests).
+- [PR #5818](https://github.com/OWASP/Nest/pull/5818) — bot validation comments (assignment, commit signature).
+- Course `ai301-unit6` / `ai301-unit7` / `ai301-unit8` INSTALL docs — voice guard, ship-gate, PR monitor.
