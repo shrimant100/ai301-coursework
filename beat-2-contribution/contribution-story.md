@@ -12,6 +12,7 @@ files and no evidence uploads are part of Assignment 5.
 **GitHub Username:** shrimant100
 **Issue:** https://github.com/OWASP/Nest/issues/5259
 **Pull Request:** https://github.com/OWASP/Nest/pull/5818
+**Claim comment:** https://github.com/OWASP/Nest/issues/5259#issuecomment-6728578830
 
 One repository, built across units 5 to 8, telling the whole story of your real
 contribution. Fill it as you work, not at the end — the sections below ask for evidence that
@@ -122,19 +123,21 @@ On every sitemap regeneration, `/repositories` gets “now” as `lastmod` while
 
 **Environment Setup**
 
-Windows 11; fork `shrimant100/Nest` at commit `9cfebd7` (2026-11-08). Docker Desktop 24.0.6 is installed but the daemon was stopped during this week’s repro — full Nest stack uses Docker + WSL per `CONTRIBUTING.md` (I will run `make backend-test-unit` and XML sitemap compare before the PR). Helper script: `beat-1-sandbox/unit-6/repro_static_route_check.py` (also in unit-6 starter).
+Windows 11; fork `shrimant100/Nest`. Pre-fix baseline: `main` @ `9cfebd7` (2026-11-08). Post-fix verification: branch `fix/5259-repositories-sitemap-lastmod` @ `2cf632c`. Docker Desktop 24.0.6 installed; daemon not running during story work — static repro + `compileall` below; full `make backend-test-unit` deferred to WSL (documented in Testing Strategy). Helper: `beat-1-sandbox/unit-6/repro_static_route_check.py` (parses live `base.py` / `static.py`).
 
 **Steps to Reproduce**
 
-1. Clone the fork and confirm SHA: `git rev-parse HEAD` → `9cfebd7…`
-2. Run `python beat-1-sandbox/unit-6/repro_static_route_check.py` (parses `base.py` / `static.py` on disk).
-3. Compare simulated `lastmod` branches: `/repositories` hits `datetime.now(UTC)`; `/projects` and `/chapters` would call `aggregate(Max("updated_at"))`.
+1. On `main` @ `9cfebd7`: `git show 9cfebd7:backend/src/apps/sitemap/views/static.py` and confirm `path_to_model` has seven entries (no `/repositories`).
+2. Run `python beat-1-sandbox/unit-6/repro_static_route_check.py` → expect `unmapped static routes: ['/repositories']` and `/repositories` on the `datetime.now(UTC)` branch.
+3. Check out `fix/5259-repositories-sitemap-lastmod` and re-run the same script → expect `unmapped static routes: []` and `/repositories` on the aggregate branch (matches issue steps 1–3 at the code path that drives `<lastmod>`).
 
 **Reproduction Evidence**
 
-- **Commit showing reproduction:** none (no commit yet; repro is pre-fix inspection on `main`)
-- **Screenshots/logs:** quoted CLI output below (from 2026-11-08 run)
-- **My findings:** only `/repositories` is missing from `path_to_model`; this matches the issue’s root cause. Next: regenerate static sitemap in Docker/WSL and capture `<lastmod>` XML diff for PR evidence.
+- **Commit showing reproduction:** [shrimant100/Nest@2cf632c](https://github.com/shrimant100/Nest/commit/2cf632cf83fa023d4f9f431e3c775ee2ad61fed5) (fix + tests on branch); pre-fix state at [9cfebd7](https://github.com/shrimant100/Nest/commit/9cfebd7) on `main`.
+- **Screenshots/logs:** quoted CLI and source inspection below (2026-11-08 before, 2026-11-09 after).
+- **My findings:** Bug is the missing dict entry, not a runtime-only flake — `STATIC_ROUTES` includes `/repositories` but `lastmod()` fell through to `datetime.now(UTC)`. XML sitemap compare still queued for Docker/WSL.
+
+**Before (`main` @ 9cfebd7):**
 
 ```text
 unmapped static routes: ['/repositories']
@@ -142,12 +145,22 @@ unmapped static routes: ['/repositories']
 /projects: would call model.objects.aggregate(Max('updated_at'))
 ```
 
+(`path_to_model` on main ends at `/snapshots` with no `Repository` import.)
+
+**After (`fix/5259…` @ 2cf632c, 2026-11-09):**
+
+```text
+path_to_model keys (8): ... /repositories, ...
+unmapped static routes: []
+/repositories: would call model.objects.aggregate(Max('updated_at'))
+```
+
 **Toolkit**
 
-- Tool: repro-check (manual rubric pass); helper script + `repro-draft.md`
-- What it produced: accept-grade package in `beat-1-sandbox/unit-6/repro-grade-notes.md` (not posted on GitHub — repro stays in PR later)
-- Difficulties: Docker daemon off + WSL not usable from this shell; deferred full sitemap XML compare
-- What changed: documented honest deferral in repro draft instead of over-claiming XML output
+- Tool: repro-check (manual accept); `repro_static_route_check.py` + `repro-draft.md`
+- What it produced: before/after quoted output; commit links tying repro to branch
+- Difficulties: no Docker — could not run issue’s XML sitemap generation step literally
+- What changed: two-SHA repro narrative instead of single-day snapshot only
 
 ---
 
@@ -169,7 +182,7 @@ Add `from apps.github.models.repository import Repository` and `"/repositories":
 2. Update `test_lastmod` patches; add `test_lastmod_repositories_uses_repository_aggregate` and `test_every_static_route_maps_to_model`.
 3. Run `make backend-test-unit` / `make check-test-backend` before PR (Docker + WSL).
 
-No deviations yet.
+**Deviation (2026-11-09):** Step 3 not run locally — Docker daemon off on Windows; recorded in `test_evidence.md` and `plan.md` with route-map + `compileall` + PR CI as interim evidence.
 
 **Toolkit**
 
@@ -182,16 +195,21 @@ No deviations yet.
 
 ## Testing Strategy
 
-1. **Route-map repro** (`repro_static_route_check.py`): before fix `unmapped static routes: ['/repositories']`; after fix `[]` and `/repositories` on aggregate branch (quoted in `test_evidence.md`).
-2. **Unit tests:** `backend/tests/unit/apps/sitemap/views/static_test.py` — regression + `/repositories` aggregate assertion (run via `make backend-test-unit` when Docker is up).
-3. **Ship-gate manifest:** `make check` then `make check-test-backend` before `gh pr create`.
+Observable checks, in the order I ran them:
+
+1. **Route-map repro (primary):** `python beat-1-sandbox/unit-6/repro_static_route_check.py` — **before** `['/repositories']` unmapped; **after** `[]` (Reproduction Process quotes).
+2. **Syntax on touched files:** from clone root, `python -m compileall -q backend/src/apps/sitemap/views/static.py backend/tests/unit/apps/sitemap/views/static_test.py` → **exit 0** (2026-11-09).
+3. **Unit tests in the diff (not yet executed in Docker):** `static_test.py` adds `test_lastmod_repositories_uses_repository_aggregate` and `test_every_static_route_maps_to_model`; existing `test_lastmod` patches `Repository`. These are the tests Nest CI runs in `run-backend-tests.yaml` (`poetry run pytest tests/unit`) — I will run `make backend-test-unit` in WSL before reopening the PR.
+4. **Upstream CI on PR #5818 (automated):** SonarCloud **pass**; Snyk **pass**; `check-contribution` **fail** (expected: unassigned issue + unsigned commit) — not a verdict on the sitemap logic.
+
+**Still deferred:** `make check-test-backend` and XML `<lastmod>` compare per issue reproduction steps — requires Docker + WSL per CONTRIBUTING.
 
 **Toolkit**
 
-- Tool: ship-gate manifest; local `test_evidence.md`
-- What it produced: before/after repro quotes; pending Docker pytest log
-- Difficulties: Windows `make` needs bash/getconf; Docker daemon off
-- What changed: documented honest pending check in `pr_draft.md` checklist
+- Tool: ship-gate manifest (`compileall` row); `test_evidence.md`; `gh pr checks 5818`
+- What it produced: layered evidence (repro → compileall → named tests in diff → CI)
+- Difficulties: cannot claim pytest green locally without Docker image
+- What changed: testing section lists CI signals, not only “tests pending”
 
 ---
 
@@ -218,7 +236,19 @@ Opened [PR #5818](https://github.com/OWASP/Nest/pull/5818); github-actions close
 
 **PR Link:** https://github.com/OWASP/Nest/pull/5818
 
-**PR Description:** Matches `pr_draft.md` — Resolves #5259, before/after route-map repro, compileall, deferred `make check-test-backend`, AI disclosure, assignment note.
+**PR Description:** Resolves #5259. Two-file change (+34 / −0): `static.py` adds `Repository` + `"/repositories"` mapping; `static_test.py` adds regression coverage. Body includes before/after route-map repro, `compileall`, AI disclosure, assignment note — same text as fork `pr_draft.md`.
+
+**PR evidence (for graders / reviewers)**
+
+| Evidence | Detail |
+|----------|--------|
+| Commit | [2cf632c](https://github.com/shrimant100/Nest/commit/2cf632cf83fa023d4f9f431e3c775ee2ad61fed5) on `fix/5259-repositories-sitemap-lastmod` |
+| Diff | [PR files tab](https://github.com/OWASP/Nest/pull/5818/files) — 2 files, +34 lines |
+| Fix snippet | `static.py`: `from apps.github.models.repository import Repository` and `"/repositories": Repository` in `path_to_model` |
+| Test snippet | `test_lastmod_repositories_uses_repository_aggregate`, `test_every_static_route_maps_to_model` |
+| Claim | [Issue comment #6728578830](https://github.com/OWASP/Nest/issues/5259#issuecomment-6728578830) |
+| Local checks | Route-map before/after; `compileall` exit 0 |
+| CI (opened) | SonarCloud pass; contribution check fail (assignment/signature) |
 
 **Maintainer Feedback:**
 
