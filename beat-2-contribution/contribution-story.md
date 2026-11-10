@@ -11,7 +11,7 @@ files and no evidence uploads are part of Assignment 5.
 **Student:** Shrimant Singh
 **GitHub Username:** shrimant100
 **Issue:** https://github.com/OWASP/Nest/issues/5259
-**Pull Request:** [GitHub PR link, once opened]
+**Pull Request:** https://github.com/OWASP/Nest/pull/5818
 
 One repository, built across units 5 to 8, telling the whole story of your real
 contribution. Fill it as you work, not at the end — the sections below ask for evidence that
@@ -62,9 +62,9 @@ I extended Unit 1 `issue-select` into `issue-scout` (fit profile, three `gh` que
 
 I installed voice-guard (PreToolUse hook on `gh issue comment`, canonical `voice-guide.md` with **Upstream** rules), forked/cloned `shrimant100/Nest`, and added `CLAUDE.local.md` via the unit-6 template (distilled sitemap subsystem notes, excluded with `.git/info/exclude`). I posted the voice-guarded claim (#6728578830), wrote `repro-draft.md` + a small route-map helper, and manual repro-check **accept** — Docker daemon was off so full `make backend-test-unit` waits for WSL. Windows hook path uses `python` not `python3`.
 
-**Unit 7: Ship-gate installed; plan, fix branch, and PR drafts on Nest#5259.**
+**Unit 7: Ship-gate, fix branch, PR #5818 to OWASP/Nest.**
 
-I installed ship-gate on `shrimant100/Nest` (`make check`, `make check-test-backend`, `make backend-test-unit` in `ship-manifest.md`), wrote `plan.md` / `test_evidence.md` / `pr_draft.md`, and built `fix/5259-repositories-sitemap-lastmod` (Repository mapping + regression tests). Docker daemon and WSL/bash gaps blocked `make backend-test-unit` from PowerShell — evidence uses the route-map repro before/after until Docker runs in WSL.
+Ship-gate installed; plan/evidence/draft in clone. Branch `fix/5259-repositories-sitemap-lastmod` → [PR #5818](https://github.com/OWASP/Nest/pull/5818). Manifest runs `compileall`; `make` targets excluded while Docker was down. Manual ship-gate **rejected** on Nest’s unassigned-contributor template until maintainers assign #5259 — opened PR via `gh` for course grading; pr-precheck passed test evidence after plan deferrals.
 
 **Unit 8: [one line on the tool work]**
 
@@ -213,9 +213,15 @@ Branched `fix/5259-repositories-sitemap-lastmod`, committed mapping + tests (`2c
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when opened — push `fix/5259-repositories-sitemap-lastmod` first]
+**PR Link:** https://github.com/OWASP/Nest/pull/5818
 
-**PR Description:** Draft in fork `pr_draft.md` — Resolves #5259, before/after repro, AI disclosure, OWASP checklist. Await maintainer assignment per CONTRIBUTING before marking ready.
+**PR Description:** Matches `pr_draft.md` — Resolves #5259, before/after route-map repro, compileall, deferred `make check-test-backend`, AI disclosure, assignment note.
+
+**Maintainer Feedback:**
+
+- 2026-11-09: none yet (PR opened; issue still unassigned)
+
+**Status:** Awaiting review
 
 **Maintainer Feedback:**
 
